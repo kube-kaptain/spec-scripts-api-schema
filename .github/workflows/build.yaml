@@ -15,4 +15,4 @@ jobs:
       checks: write
     with:
       spec-type: schema
-      spec-validation-type: ajv
+      spec-validation-type: python3-jsonschema
