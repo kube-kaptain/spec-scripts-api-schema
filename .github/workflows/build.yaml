@@ -1,0 +1,17 @@
+name: Spec Check Filter Release
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    uses: kube-kaptain/buildon-github-actions/.github/workflows/spec-check-filter-release.yaml@spec-build-workflow-and-gh-releases-by-default-on-gh-actions
+    permissions:
+      contents: write
+      packages: write
+      checks: write
+    with:
+      spec-type: schema

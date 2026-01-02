@@ -1,0 +1,289 @@
+# SPDX-License-Identifier: CC-BY-SA-4.0
+# Copyright (c) 2025 Kaptain contributors (Fred Cooke)
+# Kaptain Scripts API Schema
+# JSON Schema (in YAML format) defining the structure of script API specifications
+
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://github.com/kube-kaptain/${ProjectName}/releases/download/${Version}/${ProjectName}-${Version}.yaml
+
+name: ${ProjectName}
+version: "${Version}"
+source: https://github.com/kube-kaptain/${ProjectName}
+latest: https://raw.githubusercontent.com/kube-kaptain/${ProjectName}/main/${ProjectName}.yaml
+tagged: https://raw.githubusercontent.com/kube-kaptain/${ProjectName}/${Version}/${ProjectName}.yaml
+release: https://github.com/kube-kaptain/${ProjectName}/releases/download/${Version}/${ProjectName}-${Version}.yaml
+
+title: Kaptain - Spec Scripts API Schema
+description: Schema for defining the API of sets of reusable shell scripts in an API specification
+
+type: object
+required:
+  - name
+  - version
+  - tool_requirements
+  - entrypoints
+
+properties:
+  version:
+    type: string
+    pattern: "^[0-9]+\\.[0-9]+$"
+    description: |
+      API version (major.minor).
+      In source file: $\{Version}
+      In release file: e.g. 1.42
+
+  name:
+    type: string
+    description: |
+      Project name, from git repo name.
+      In source file: $\{ProjectName}
+      In release file: e.g. spec-elephant-api
+
+  source:
+    type: string
+    format: uri
+    description: |
+      URL to the source repository.
+      For example for spec-elephant-api repo in my-org org:
+      In source file: https://github.com/my-org/$\{ProjectName}
+      In release file: https://github.com/my-org/spec-elephant-api
+
+  latest:
+    type: string
+    format: uri
+    description: |
+      URL to the latest version of this file in the source repo.
+      For example for spec-elephant-api repo in my-org org:
+      In source file: https://raw.githubusercontent.com/my-org/$\{ProjectName}/main/API-spec.yaml
+      In release file: https://raw.githubusercontent.com/my-org/spec-elephant-api/main/API-spec.yaml
+
+  description:
+    type: string
+    description: Overview of what this API provides
+
+  tool_requirements:
+    type: array
+    description: Tools required by scripts, ordered by dependency (validation tools first)
+    items:
+      $ref: "#/$defs/tool_requirement"
+
+  entrypoints:
+    type: object
+    description: Public API surface - scripts called by consumers
+    additionalProperties:
+      $ref: "#/$defs/script"
+
+  internals:
+    type: object
+    description: Supporting scripts called by entrypoints or other internals
+    additionalProperties:
+      $ref: "#/$defs/script"
+
+  deprecations:
+    type: array
+    description: Deprecated features for migration planning
+    items:
+      $ref: "#/$defs/deprecation"
+
+$defs:
+  tool_requirement:
+    type: object
+    required:
+      - name
+      - binary
+      - min_version
+      - version_check
+    properties:
+      name:
+        type: string
+        description: Human-readable name (e.g., "Mike Farah YQ 4")
+      binary:
+        type: string
+        description: Command/binary name (e.g., "yq4")
+      min_version:
+        type: string
+        description: Minimum required version
+      max_version:
+        type: string
+        description: Maximum allowed version (for breaking changes)
+      version_check:
+        type: string
+        description: Command to extract installed version
+      version_pattern:
+        type: string
+        description: Regex to parse version from check output
+      homepage:
+        type: string
+        format: uri
+        description: Project homepage URL
+      download:
+        type: string
+        format: uri
+        description: Download/installation page URL
+      notes:
+        type: string
+        description: Installation hints, caveats
+
+  script:
+    type: object
+    required:
+      - description
+    properties:
+      description:
+        type: string
+        description: What this script does
+      inputs:
+        type: object
+        description: Input parameters (environment variables)
+        additionalProperties:
+          $ref: "#/$defs/input"
+      outputs:
+        type: object
+        description: Output values produced
+        additionalProperties:
+          $ref: "#/$defs/output"
+      exit_codes:
+        type: object
+        description: Exit code meanings
+        additionalProperties:
+          type: string
+      exit_codes_combinable:
+        type: boolean
+        default: false
+        description: Whether exit codes are bit flags that can be combined
+      tool_requirements:
+        type: array
+        description: Script-specific tool requirements (beyond global)
+        items:
+          type: string
+      called_by:
+        type: array
+        description: Scripts that call this one (for internals)
+        items:
+          type: string
+      examples:
+        type: array
+        description: Usage examples
+        items:
+          type: string
+      notes:
+        type: string
+        description: Additional context
+
+  input:
+    type: object
+    required:
+      - type
+      - description
+    properties:
+      type:
+        type: string
+        enum: [string, boolean, integer, array]
+        description: Data type of the input value
+      kind:
+        type: string
+        enum: [env_var, positional, flag]
+        default: env_var
+        description: How the input is passed to the script
+      description:
+        type: string
+        description: What this input controls
+      env_var:
+        type: string
+        description: Environment variable name (for kind=env_var, defaults to key in UPPER_SNAKE_CASE)
+      position:
+        type: integer
+        minimum: 1
+        description: Argument position, 1-based (for kind=positional)
+      flag:
+        type: object
+        description: Flag specification (for kind=flag)
+        properties:
+          long:
+            type: string
+            description: Long form with double dash (e.g., "--output")
+          short:
+            type: string
+            description: Short form with single dash (e.g., "-o")
+      required:
+        type: boolean
+        default: false
+        description: Whether input must be provided
+      default:
+        description: Default value if not provided
+      allowed_values:
+        type: array
+        description: Enum of valid values
+      pattern:
+        type: string
+        description: Regex for validation (strings)
+      min:
+        type: number
+        description: Minimum value (integers)
+      max:
+        type: number
+        description: Maximum value (integers)
+      separator:
+        type: string
+        default: ","
+        description: Delimiter for array type
+      deprecated:
+        type: boolean
+        default: false
+        description: Whether this input is deprecated
+      deprecated_alias:
+        type: string
+        description: Old name that still works
+      since:
+        type: string
+        description: API version when added
+      removed_in:
+        type: string
+        description: API version when removed
+
+  output:
+    type: object
+    required:
+      - type
+      - description
+    properties:
+      type:
+        type: string
+        enum: [string, boolean, integer]
+        description: Output type
+      description:
+        type: string
+        description: What this output represents
+      env_var:
+        type: string
+        description: Variable name (for $GITHUB_OUTPUT etc.)
+      stdout:
+        type: boolean
+        default: false
+        description: Written to stdout
+      conditional:
+        type: string
+        description: When this output is produced
+
+  deprecation:
+    type: object
+    required:
+      - old
+      - new
+      - deprecated_in
+    properties:
+      old:
+        type: string
+        description: Deprecated name/feature
+      new:
+        type: string
+        description: Replacement
+      deprecated_in:
+        type: string
+        description: Version deprecated
+      removed_in:
+        type: string
+        description: Version removed
+      notes:
+        type: string
+        description: Migration guidance
