@@ -8,10 +8,11 @@ on:
 
 jobs:
   build:
-    uses: kube-kaptain/buildon-github-actions/.github/workflows/spec-check-filter-release.yaml@spec-build-workflow-and-gh-releases-by-default-on-gh-actions
+    uses: kube-kaptain/buildon-github-actions/.github/workflows/spec-check-filter-release.yaml@fix-gh-release
     permissions:
       contents: write
       packages: write
       checks: write
     with:
       spec-type: schema
+      spec-validation-type: python3-jsonschema
