@@ -12,6 +12,7 @@ source: https://github.com/kube-kaptain/${ProjectName}
 latest: https://raw.githubusercontent.com/kube-kaptain/${ProjectName}/main/${ProjectName}.yaml
 tagged: https://raw.githubusercontent.com/kube-kaptain/${ProjectName}/${Version}/${ProjectName}.yaml
 release: https://github.com/kube-kaptain/${ProjectName}/releases/download/${Version}/${ProjectName}-${Version}.yaml
+validate-using: https://github.com/kube-kaptain/${ProjectName}/releases/download/${Version}/${ProjectName}-${Version}.json
 
 title: Kaptain - Spec Scripts API Schema
 description: Schema for defining the API of sets of reusable shell scripts in an API specification
