@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    uses: kube-kaptain/buildon-github-actions/.github/workflows/spec-check-filter-release.yaml@1.0.30
+    uses: kube-kaptain/buildon-github-actions/.github/workflows/spec-check-filter-release.yaml@1.0.31
     permissions:
       contents: write
       packages: write
@@ -16,3 +16,5 @@ jobs:
     with:
       spec-type: schema
       spec-validation-type: python3-jsonschema
+      block-conventional-commits: true
+      block-slash-containing-branches: true
