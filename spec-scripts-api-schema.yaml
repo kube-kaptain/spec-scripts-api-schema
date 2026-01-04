@@ -244,6 +244,9 @@ $defs:
       removed_in:
         type: string
         description: API version when removed
+      notes:
+        type: string
+        description: Additional context for this input
     additionalProperties: false
 
   output:
