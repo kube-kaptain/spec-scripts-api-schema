@@ -247,6 +247,9 @@ $defs:
       notes:
         type: string
         description: Additional context for this input
+      builtin_values:
+        type: array
+        description: Built-in values that work out of the box (unknown values warn but still attempt)
     additionalProperties: false
 
   output:
