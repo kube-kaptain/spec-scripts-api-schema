@@ -23,6 +23,7 @@ required:
   - version
   - tool_requirements
   - entrypoints
+additionalProperties: false
 
 properties:
   version:
@@ -124,6 +125,7 @@ $defs:
       notes:
         type: string
         description: Installation hints, caveats
+    additionalProperties: false
 
   script:
     type: object
@@ -170,6 +172,7 @@ $defs:
       notes:
         type: string
         description: Additional context
+    additionalProperties: false
 
   input:
     type: object
@@ -241,6 +244,7 @@ $defs:
       removed_in:
         type: string
         description: API version when removed
+    additionalProperties: false
 
   output:
     type: object
@@ -265,6 +269,7 @@ $defs:
       conditional:
         type: string
         description: When this output is produced
+    additionalProperties: false
 
   deprecation:
     type: object
@@ -288,3 +293,4 @@ $defs:
       notes:
         type: string
         description: Migration guidance
+    additionalProperties: false
